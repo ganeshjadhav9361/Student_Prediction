@@ -12,7 +12,6 @@ exports.registerController=(req,res)=>{
 }
 exports.registeruserdata=(req,res)=>{
      let {name,email,contact,username,password}=req.body;
-     console.log(req.body);
     let encFormatPass=bcrypt.hashSync(password,8);
      let result=registermodel.registeruserdata(name,email,contact,username,encFormatPass);
      result.then((r)=>{
