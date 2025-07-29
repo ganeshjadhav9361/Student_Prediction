@@ -1,6 +1,6 @@
 let express= require("express");
 let router= express.Router();
-let studCtrl= require(/controllers/studentController.js);
+let studCtrl = require("../controllers/studentController.js");
 
 router.get("/",studCtrl.homePage);
 

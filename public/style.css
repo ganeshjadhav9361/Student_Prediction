@@ -1,0 +1,38 @@
+body, html {
+  margin: 0;
+  padding: 0;
+  height: 100%;
+  width: 100%;
+}
+
+.hero {
+  height: 100vh;              /* Full screen height */
+  width: 100vw;               /* Full screen width */
+  background-image: url('/Images/bg1.jpg'); /* initial background */
+  background-size: cover;     /* Cover full area */
+  background-position: center;
+  background-repeat: no-repeat;
+  position: relative;
+  transition: background-image 1s ease-in-out;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  color: white;
+  overflow: hidden;
+}
+
+.hero::after {
+  content: "";
+  position: absolute;
+  top: 0; left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(0, 0, 0, 0.4); /* Optional dark overlay */
+  z-index: 1;
+}
+
+.hero .container {
+  position: relative;
+  z-index: 2;
+}
