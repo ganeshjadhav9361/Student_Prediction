@@ -1,5 +1,11 @@
+
+let express= require("express");
+let router= express.Router();
+let studCtrl = require("../controllers/studentController.js");
+
 let express = require("express");
 let router = express.Router();
+
 
 let studCtrl = require("../controllers/studentController.js");
 let loginCtrl = require("../controllers/loginController.js");
