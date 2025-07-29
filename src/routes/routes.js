@@ -4,11 +4,14 @@ let router= express.Router();
 let studCtrl = require("../controllers/studentController.js");
 
 let loginCtrl = require("../controllers/loginController.js");
+let courseCtrl=require("../controllers/courseController.js");
 
-router.get("/", studCtrl.homePage);
+router.get("/home", studCtrl.homePage);
 router.get("/register", loginCtrl.registerController);
 router.post("/validateuser", loginCtrl.validateLoginUser);
 router.post("/registeruser", loginCtrl.registeruserdata);
 router.post("/loginuserprofile",loginCtrl.getLoginUserProfile);
 
-module.exports = router;
+router.post("/add", courseCtrl.createCourse);
+
+module.exports = router;``
