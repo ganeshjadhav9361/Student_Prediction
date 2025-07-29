@@ -5,8 +5,9 @@ let path = require("path");
 let bodyParser = require("body-parser");
 let routes = require("./routes/routes.js");
 let app = express();
+app.use(express.static( "public"));
 app.set("view engine", "ejs");
-app.set("views", path.join(__dirname,"..", "views"));
+
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(express.json());
 app.use(cookieParser());
