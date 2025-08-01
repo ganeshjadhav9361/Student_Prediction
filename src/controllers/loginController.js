@@ -21,9 +21,10 @@ exports.validateLoginUser = async (req, res) => {
             );
 
             res.cookie("token", token); 
-
+            res.send("Login Successful");
             res.render("viewprofile.ejs", { loginUserName: user.username });
         } else {
+            res.send("Login Failed: Invalid username or password");
             res.render("login.ejs", { msg: "Login Failed: Invalid username or password" });
         }
     } catch (err) {

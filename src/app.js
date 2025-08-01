@@ -1,7 +1,7 @@
 let express = require("express");
 let conn = require("../db.js");
 
-// const router = require("./routes/routes.js");
+ const courseRouter = require("./routes/courseRouter.js");
 const userRouter=require("./routes/userRouter.js");
 const cookieParser = require("cookie-parser");
 const loginRouter = require("./routes/loginRouter.js"); 
@@ -21,5 +21,6 @@ app.use(cookieParser());
 
 app.use("/",userRouter);
 app.use("/",loginRouter);
+app.use("/", courseRouter);
 
 module.exports = app;
