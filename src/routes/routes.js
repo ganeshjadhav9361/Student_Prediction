@@ -5,6 +5,7 @@ let studCtrl = require("../controllers/studentController.js");
 
 let loginCtrl = require("../controllers/loginController.js");
 let courseCtrl=require("../controllers/courseController.js");
+let registerCtrl= require("../controllers/registerController.js");
 
 router.get("/home", studCtrl.homePage);
 router.get("/register", loginCtrl.registerController);
