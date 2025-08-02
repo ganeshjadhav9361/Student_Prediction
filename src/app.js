@@ -5,6 +5,8 @@ let conn = require("../db.js");
 const userRouter=require("./routes/userRouter.js");
 const cookieParser = require("cookie-parser");
 const loginRouter = require("./routes/loginRouter.js"); 
+const studentRouter = require("./routes/studentRouter");
+
 
 let path = require("path");
 let bodyParser = require("body-parser");
@@ -21,6 +23,7 @@ app.use(cookieParser());
 
 app.use("/",userRouter);
 app.use("/",loginRouter);
-app.use("/", courseRouter);
+app.use("/",courseRouter);
+app.use("/",studentRouter);
 
 module.exports = app;

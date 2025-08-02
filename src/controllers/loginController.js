@@ -1,7 +1,8 @@
+require("dotenv").config();
 let usermodel=require("../models/loginModel.js");
 let bcrypt=require("bcrypt");
 let jwt=require("jsonwebtoken");
-let secretKey="ABCD#$1234";
+const secretKey = process.env.secretKey;
 
 exports.validateLoginUser = async (req, res) => {
     const { username, password } = req.body;
@@ -17,7 +18,7 @@ exports.validateLoginUser = async (req, res) => {
                     role: user.role
                 },
                 secretKey,
-                { expiresIn: '1m' }
+                { expiresIn: '1h' }
             );
 
             res.cookie("token", token);
@@ -32,6 +33,7 @@ exports.validateLoginUser = async (req, res) => {
         }
     } catch (err) {
         console.error("Login error:", err);
-        res.status(500).render("login.ejs", { msg: "Login Failed: Server error" });
+        //res.status(500).render("login.ejs", { msg: "Login Failed: Server error" });
+    res.status(500).send("Login Failed: Server error");
     }
 };
