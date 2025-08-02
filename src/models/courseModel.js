@@ -10,44 +10,27 @@ exports.saveCourse = async (name) => {
     throw err;
   }
 };
-exports.getAllCourses = () => {
+exports.getAllCourses = async () => {
     console.log("model.....");
-    return new Promise((resolve, reject) => {
-        conn.query("SELECT * FROM courses", (err, result) => {
-            if (err) {
-                console.log(err);
-                reject(err);
-            } else {
-                console.log(result);
-                resolve(result);
-            }
-        });
-    });
+    try {
+        const [rows] = await conn.query("SELECT * FROM courses");
+        console.log("Courses fetched:", rows);
+        return rows;
+    } catch (err) {
+        console.error("Error fetching courses:", err);
+        throw err;
+    }
 };
 exports.delCourseById = (cid) => {
     return new Promise((resolve, reject) => {
         
-        conn.query("DELETE FROM courses WHERE id = ?", [cid], (err, result) => {
+        conn.query("DELETE FROM courses WHERE cid = ?", [cid], (err, result) => {
             if (err) {
                 reject(err);
             } else {
                 resolve(result);
             }
         });
-    });
-};
-exports.UpdateCourse = (cid, name) => {
-    return new Promise((resolve, reject) => {
-        conn.query(
-            "UPDATE courses SET name = ? WHERE id = ?",[name, cid],
-            (err, result) => {
-                if (err) {
-                    reject(err);
-                } else {
-                    resolve("Course updated successfully");
-                }
-            }
-        );
     });
 };
 exports.getCourseById = (cid) => {
@@ -56,20 +39,6 @@ exports.getCourseById = (cid) => {
             if (err) {
                 reject(err);
             } else {
-                resolve(result);
-            }
-        });
-    });
-};
-exports.getCourseById = (cid) => {
-    console.log("Fetching course by ID...");
-    return new Promise((resolve, reject) => {
-        conn.query("select * from courses where cid = ?", [cid], (err, result) => {
-            if (err) {
-                console.log(err);
-                reject(err);
-            } else {
-                console.log(result);
                 resolve(result);
             }
         });
@@ -84,19 +53,6 @@ exports.UpdateCourse = (cid, name) => {
                 reject(err);
             } else {
                 console.log("Update result:", result);
-                resolve(result);
-            }
-        });
-    });
-};
-exports.getAllCourses = () => {
-    return new Promise((resolve, reject) => {
-        conn.query("SELECT * FROM courses", (err, result) => {
-            if (err) {
-                console.log("Error fetching courses:", err);
-                reject(err);
-            } else {
-                console.log("Courses fetched successfully:", result);
                 resolve(result);
             }
         });
