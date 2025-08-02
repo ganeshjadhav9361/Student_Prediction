@@ -1,13 +1,14 @@
 let express = require("express");
 let conn = require("../db.js");
-
- const courseRouter = require("./routes/courseRouter.js");
-const userRouter=require("./routes/userRouter.js");
-const cookieParser = require("cookie-parser");
-const loginRouter = require("./routes/loginRouter.js"); 
-
+require("dotenv").config();
 let path = require("path");
 let bodyParser = require("body-parser");
+
+const courseRouter = require("./routes/courseRouter.js");
+const userRouter=require("./routes/userRouter.js");
+const loginRouter = require("./routes/loginRouter.js"); 
+const performanceRouter = require("./routes/performanceRouter.js");
+const cookieParser = require("cookie-parser");
 
 let app = express();
 app.set("view engine", "ejs");
@@ -22,5 +23,6 @@ app.use(cookieParser());
 app.use("/",userRouter);
 app.use("/",loginRouter);
 app.use("/", courseRouter);
+app.use("/", performanceRouter);
 
 module.exports = app;
