@@ -19,9 +19,11 @@ exports.validateLoginUser = async (req, res) => {
                 },
                 secretKey,
                 { expiresIn: "1m" }
-            );
-
+      
+            res.cookie("token", token);
+            res.status(200).send("Login successful, token generated");
             res.cookie("token", token); 
+
 
             console.log("Login successful, token generated:", token);
 
