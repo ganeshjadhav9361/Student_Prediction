@@ -21,8 +21,7 @@ exports.validateLoginUser = async (req, res) => {
                 { expiresIn: '1h' }
             );
 
-            res.cookie("token", token);
-            
+            res.cookie("token", token);c
             res.status(200).send("Login successful, token generated");
             console.log("Login successful, token generated:", token);
             // res.render("viewprofile.ejs", { loginUserName: user.username });

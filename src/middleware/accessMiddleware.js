@@ -20,8 +20,6 @@ exports.verifyToken = (req, res, next) => {
         return res.status(403).json({ error: "Invalid or expired token." });
     }
 };
-
-
 exports.isAdmin = (req, res, next) => {
     console.log("Checking admin for user:", req.user); 
     if (req.user && req.user.role === "admin") {
