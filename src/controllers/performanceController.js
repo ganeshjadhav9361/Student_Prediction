@@ -1,61 +1,72 @@
-const performanceModel = require("../models/performanceModel.js");
+const performanceModel = require("../models/performanceModel");
 
-exports.getPerformanceForm = async (req, res) => {
-    const sid = req.params.id;
+exports.viewForm = async (req, res) => {
+    const { sid } = req.body;
+
+    if (!sid) {
+        return res.status(400).json({ success: false, message: "Student ID (sid) is required" });
+    }
 
     try {
         const performance = await performanceModel.getPerformanceByStudentId(sid);
-        res.render("performanceForm.ejs", { sid, performance });
-    } catch (error) {
-        console.error("Error fetching performance:", error);
-        res.status(500).send("Internal Server Error");
-    }
-};
 
-exports.submitPerformance = async (req, res) => {
-    const sid = req.params.id;
-    const {
-        attendance_percentage,
-        machine_test,
-        mcq_test,
-        mock_interview_score,
-        final_score
-    } = req.body;
-
-    const values = [
-        attendance_percentage,
-        machine_test,
-        mcq_test,
-        mock_interview_score,
-        final_score
-    ];
-    if (!values.every(score => !isNaN(score) && score >= 0 && score <= 100)) {
-        return res.status(400).send("All scores must be numbers between 0 and 100.");
-    }
-
-    const data = {
-        sid,
-        attendance_percentage,
-        machine_test,
-        mcq_test,
-        mock_interview_score,
-        final_score
-    };
-
-    try {
-        const existing = await performanceModel.getPerformanceByStudentId(sid);
-
-        if (existing) {
-            await performanceModel.updatePerformance(data);
-        } else {
-            await performanceModel.insertPerformance(data);
+        if (!performance) {
+            return res.status(404).json({ success: false, message: "Performance not found" });
         }
 
-        res.redirect(`/performance/${sid}`);
+        res.status(200).json({ success: true, performance });
     } catch (error) {
-        console.error("Error submitting performance:", error);
-        res.status(500).send("Internal Server Error");
+        console.error("Error fetching performance:", error);
+        res.status(500).json({ success: false, message: "Server error" });
     }
 };
+
+exports.addPerformance = async (req, res) => {
+    const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score } = req.body;
+
+    if (!sid) {
+        return res.status(400).json({ success: false, message: "Student ID is required" });
+    }
+
+    const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score];
+    if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 100)) {
+        return res.status(400).json({ success: false, message: "Scores must be between 0 and 100" });
+    }
+
+    try {
+        await performanceModel.insertPerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score });
+        res.status(201).json({ success: true, message: "Performance added successfully" });
+    } catch (error) {
+        console.error("Error adding performance:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+exports.updatePerformance = async (req, res) => {
+    const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score } = req.body;
+
+    if (!sid) {
+        return res.status(400).json({ success: false, message: "Student ID is required" });
+    }
+
+    const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score];
+    if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 100)) {
+        return res.status(400).json({ success: false, message: "Scores must be between 0 and 100" });
+    }
+
+    try {
+        await performanceModel.updatePerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score });
+        res.status(200).json({ success: true, message: "Performance updated successfully" });
+    } catch (error) {
+        console.error("Error updating performance:", error);
+        res.status(500).json({ success: false, message: "Server error" });
+    }
+};
+
+
+
+
+
+
 
 
