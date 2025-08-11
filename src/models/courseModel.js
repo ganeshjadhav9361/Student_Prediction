@@ -13,7 +13,7 @@ exports.saveCourse = async (name) => {
 exports.getAllCourses = async () => {
     console.log("model.....");
     try {
-        const [rows] = await conn.query("SELECT * FROM courses");
+        const [rows] = await conn.query("SELECT * FROM courses ORDER BY cid ASC");
         console.log("Courses fetched:", rows);
         return rows;
     } catch (err) {
@@ -21,17 +21,25 @@ exports.getAllCourses = async () => {
         throw err;
     }
 };
-exports.delCourseById = (cid) => {
-    return new Promise((resolve, reject) => {
+// exports.delCourseById = (cid) => {
+//     return new Promise((resolve, reject) => {
         
-        conn.query("DELETE FROM courses WHERE cid = ?", [cid], (err, result) => {
-            if (err) {
-                reject(err);
-            } else {
-                resolve(result);
-            }
-        });
+//         conn.query("DELETE FROM courses WHERE cid = ?", [cid], (err, result) => {
+//             if (err) {
+//                 reject(err);
+//             } else {
+//                 resolve(result);
+//             }
+//         });
+//     });
+// };
+exports.delCourseById = (cid) => {
+  return new Promise((resolve, reject) => {
+    conn.query("DELETE FROM courses WHERE cid = ?", [cid], (err, result) => {
+      if (err) return reject(err);
+      resolve(result); // result.affectedRows will be checked in controller
     });
+  });
 };
 exports.getCourseById = (cid) => {
     return new Promise((resolve, reject) => {
@@ -58,20 +66,20 @@ exports.UpdateCourse = (cid, name) => {
         });
     });
 };
-exports.deleteCourse = (cid) => {
-    return new Promise((resolve, reject) => {
-        console.log("delete model hit");
-        conn.query("DELETE FROM courses WHERE cid = ?", [cid], (err, result) => {
-            if (err) {
-                console.log("Error deleting course:", err);
-                reject(err);
-            } else {
-                console.log("Course deleted successfully:", result);
-                resolve(result);
-            }
-        });
-    });
-};
+// exports.deleteCourse = (cid) => {
+//     return new Promise((resolve, reject) => {
+//         console.log("delete model hit");
+//         conn.query("DELETE FROM courses WHERE cid = ?", [cid], (err, result) => {
+//             if (err) {
+//                 console.log("Error deleting course:", err);
+//                 reject(err);
+//             } else {
+//                 console.log("Course deleted successfully:", result);
+//                 resolve(result);
+//             }
+//         });
+//     });
+// };
 
 
 

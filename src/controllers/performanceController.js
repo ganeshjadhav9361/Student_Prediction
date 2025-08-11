@@ -21,7 +21,6 @@ exports.submitPerformance = async (req, res) => {
         mock_interview_score,
         final_score
     } = req.body;
-
     const values = [
         attendance_percentage,
         machine_test,

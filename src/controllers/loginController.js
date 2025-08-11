@@ -18,13 +18,12 @@ exports.validateLoginUser = async (req, res) => {
                     role: user.role
                 },
                 secretKey,
-                { expiresIn: "1m" }
-      
+                { expiresIn: "1h" }
+            )
             res.cookie("token", token);
-            res.status(200).send("Login successful, token generated");
-            res.cookie("token", token); 
-
-
+           //^ res.status(200).send("Login successful, token generated");
+            
+            
             console.log("Login successful, token generated:", token);
 
             if (user.role === "admin") {
@@ -45,6 +44,9 @@ exports.validateLoginUser = async (req, res) => {
         return res.status(500).render("login.ejs", { msg: "Login Failed: Server error" });
     }
 };
+
+           
+
 
 
 

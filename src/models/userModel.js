@@ -1,5 +1,4 @@
 let conn=require("../../db.js");
-let role="user";
 async function registerUser(username, password, role) {
     const query = "insert into users(username, password, role) values (?, ?, ?)";
     const [result] = await conn.query(query, [username, password, role]);

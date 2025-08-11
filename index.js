@@ -1,7 +1,7 @@
 require("dotenv").config();
 let app=require("./src/app.js");
 
-app.listen(9999,()=>{
+app.listen(process.env.server_port,()=>{
     
     console.log("server started");
 
