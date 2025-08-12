@@ -1,4 +1,5 @@
 let express = require("express");
+const cors = require("cors");
 let conn = require("../db.js");
 require("dotenv").config();
 
@@ -17,6 +18,11 @@ app.set("view engine", "ejs");
 
 app.use(express.static("public"));
 app.set("views", path.join(__dirname,"..", "views"));
+app.use(cors({
+  origin: "http://localhost:5173",  
+  credentials: true
+}));
+
 app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
