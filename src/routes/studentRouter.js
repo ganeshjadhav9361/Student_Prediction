@@ -8,3 +8,4 @@ router.get("/viewAllStudent",/*studentMiddleware.verifyToken,studentMiddleware.i
 router.put("/updateStudent", /*studentMiddleware.verifyToken,studentMiddleware.isAdmin,*/ studentCtrl.updateStudent);
 router.delete("/deleteStudent/:sid", /*studentMiddleware.verifyToken,studentMiddleware.isAdmin,*/ studentCtrl.deleteStudent);
 module.exports = router;
+
