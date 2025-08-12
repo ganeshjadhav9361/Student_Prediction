@@ -29,11 +29,9 @@ exports.updateStudent = (req, res) => {
         return res.status(400).json({ error: "Student ID (sid) is required" });
     }
 
-    const updateData = { name, email, contact, uid, cid };
-
-    studentModel.updateStudent(sid, updateData)
-        .then((result) => {
-            res.json({ message: result });
+    studentModel.updateStudent(sid, name, email, contact, uid, cid)
+        .then(() => {
+            res.json({ message: "Student updated successfully" });
         })
         .catch((err) => {
             console.error("Error updating student:", err);

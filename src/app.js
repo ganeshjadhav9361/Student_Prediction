@@ -38,9 +38,6 @@ app.use("/",userRouter);
 app.use("/",loginRouter);
 app.use("/",studentRouter);
 app.use("/",performanceRouter);
-app.get('/test', (req, res) => {
-  res.send('Hello world!');
-});
 
 
 module.exports = app;
