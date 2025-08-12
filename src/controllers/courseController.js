@@ -1,20 +1,21 @@
 
 const courseModel = require("../models/courseModel");
 exports.createCourse = (req, res) => {
-    let { name } = req.body;
+  let { name } = req.body;
 
-    let promise = courseModel.saveCourse(name);
-    promise.then((result) => {
-        if (result && result.affectedRows > 0) {
-           res.send("Course added successfully!");
-            
-        } else {
-            res.send("Failed to add course.");
-            
-        }
-    }).catch((err) => {
-        res.send("Failed to add course.")
-      
+  courseModel.saveCourse(name)
+    .then((result) => {
+      if (result && result.affectedRows > 0) {
+        console.log("Sending success JSON response");
+        res.json({ message: "Course added successfully!" });
+      } else {
+        console.log("Sending failure JSON response");
+        res.status(400).json({ message: "Failed to add course." });
+      }
+    })
+    .catch((err) => {
+      console.error("Error in saveCourse:", err);
+      res.status(500).json({ message: "Failed to add course." });
     });
 };
 exports.getCourseById = (req, res) => {
@@ -65,18 +66,36 @@ exports.UpdateCourse = (req, res) => {
         });
 };
 exports.deleteCourse = (req, res) => {
-    let cid =req.body.cid;  
-    let promise = courseModel.delCourseById(cid);
-    promise.then((result) => {
-        if (result.affectedRows > 0) {
-            //res.json({ message: "Course deleted successfully", result });
-            res.status(200).send("Course deleted successfully");
-
-        } 
-    }).catch((err) => {
-        res.status(500).json({ error: err });
+  const cid = req.params.cid;
+  courseModel.delCourseById(cid)
+    .then(result => {
+      if (result.affectedRows > 0) {
+        res.status(200).json({ message: "Course deleted successfully" });
+      } else {
+        res.status(404).json({ message: "Course not found" });
+      }
+    })
+    .catch(err => {
+      console.error("Error deleting course:", err);
+      res.status(500).json({ error: err.message || "Server error" });
     });
 };
+// exports.deleteCourse = (req, res) => {
+//     let cid = req.body.cid;  
+
+//     let promise = courseModel.delCourseById(cid);
+//     promise.then((result) => {
+//         if (result.affectedRows > 0) {
+//             console.log("Course deleted successfully in backend");
+//             res.status(200).json({ message: "Course deleted successfully" });
+//         } else {
+//             res.status(404).json({ message: "Course not found" });
+//         }
+//     }).catch((err) => {
+//         console.error("Error deleting course:", err);
+//         res.status(500).json({ error: err });
+//     });
+// };
 
 exports.getCourseById = (req, res) => {
     const cid = req.params.cid;

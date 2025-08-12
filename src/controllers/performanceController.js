@@ -21,16 +21,25 @@ exports.viewForm = async (req, res) => {
     }
 };
 
-exports.addPerformance = async (req, res) => {
-    const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score } = req.body;
+exports.submitPerformance = async (req, res) => {
+    const sid = req.params.id;
+    const {
+        attendance_percentage,
+        machine_test,
+        mcq_test,
+        mock_interview_score,
+        final_score
+    } = req.body;
 
-    if (!sid) {
-        return res.status(400).json({ success: false, message: "Student ID is required" });
-    }
-
-    const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score];
-    if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 100)) {
-        return res.status(400).json({ success: false, message: "Scores must be between 0 and 100" });
+    const values = [
+        attendance_percentage,
+        machine_test,
+        mcq_test,
+        mock_interview_score,
+        final_score
+    ];
+    if (!values.every(score => !isNaN(score) && score >= 0 && score <= 100)) {
+        return res.status(400).send("All scores must be numbers between 0 and 100.");
     }
 
     try {

@@ -21,20 +21,7 @@ exports.getAllStudents = async (req, res) => {
         res.status(500).json({ error: "Server error while fetching students" });
     }
 };
-// exports.updateStudent = async (req, res) => {
-//     const { sid, name, email, contact, uid, cid } = req.body;
 
-//     if (!sid || !name || !email || !contact || !uid || !cid) {
-//         return res.status(400).json({ error: "All fields are required" });
-//     }
-//     try {
-//         await studentModel.updateStudent(sid, name, email, contact, uid, cid);
-//         res.json({ message: "Student updated successfully" });
-//     } catch (err) {
-//         console.error("Update student error:", err);
-//         res.status(500).json({ error: "Failed to update student" });
-//     }
-// };
 exports.updateStudent = (req, res) => {
     const { sid, name, email, contact, uid, cid } = req.body;
 
@@ -75,14 +62,3 @@ exports.deleteStudent = (req, res) => {
             res.status(500).json({ error: "Error deleting student" });
         });
 }
-// exports.deleteStudent = async (req, res) => {
-//     const { sid } = req.params;
-
-//     try {
-//         await studentModel.deleteStudent(sid);
-//         res.json({ message: "Student deleted successfully" });
-//     } catch (err) {
-//         console.error("Delete student error:", err);
-//         res.status(500).json({ error: "Failed to delete student" });
-//     }
-// };
