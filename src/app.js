@@ -2,13 +2,14 @@ let express = require("express");
 const cors = require("cors");
 let conn = require("../db.js");
 require("dotenv").config();
+
 const courseRouter = require("./routes/courseRouter.js");
 const userRouter=require("./routes/userRouter.js");
 const cookieParser = require("cookie-parser");
 const loginRouter = require("./routes/loginRouter.js"); 
 const studentRouter = require("./routes/studentRouter");
 const performanceRouter = require("./routes/performanceRouter.js");
-
+const predictionRouter =require("./routes/predictionRouter.js")
 
 let path = require("path");
 let bodyParser = require("body-parser");
@@ -30,13 +31,18 @@ app.use(express.json());
 
 app.use(bodyParser.urlencoded({ extended: true }));
 app.use(cookieParser());
-app.use(cors());
+
 
 app.use("/",courseRouter);
 app.use("/",userRouter);
 app.use("/",loginRouter);
 app.use("/",studentRouter);
 app.use("/",performanceRouter);
+app.use("/",predictionRouter);
+app.get('/test', (req, res) => {
+  res.send('Hello world!');
+});
+
 
 
 module.exports = app;
