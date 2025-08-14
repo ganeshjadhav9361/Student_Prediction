@@ -6,8 +6,8 @@ async function registerUser(name,email,contact, password, role) {
     const [result] = await conn.query(query, [name,email,contact, password, role]);
 
     return result;
-}
 
+}
 module.exports={
     registerUser
 };

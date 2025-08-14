@@ -29,11 +29,9 @@ exports.updateStudent = (req, res) => {
         return res.status(400).json({ error: "Student ID (sid) is required" });
     }
 
-    const updateData = { name, email, contact, uid, cid };
-
-    studentModel.updateStudent(sid, updateData)
-        .then((result) => {
-            res.json({ message: result });
+    studentModel.updateStudent(sid, name, email, contact, uid, cid)
+        .then(() => {
+            res.json({ message: "Student updated successfully" });
         })
         .catch((err) => {
             console.error("Error updating student:", err);
@@ -62,3 +60,12 @@ exports.deleteStudent = (req, res) => {
             res.status(500).json({ error: "Error deleting student" });
         });
 }
+exports.getUnregisteredStudents = async (req, res) => {
+  try {
+    const data = await studentModel.getUnregisteredStudents();
+    res.json({ data });
+  } catch (err) {
+    console.error("Error fetching unregistered students:", err); // logs full error
+    res.status(500).json({ error: err.message }); // send actual MySQL error to Postman
+  }
+};
