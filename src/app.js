@@ -2,7 +2,6 @@ let express = require("express");
 const cors = require("cors");
 let conn = require("../db.js");
 require("dotenv").config();
-const cors = require("cors");
 const courseRouter = require("./routes/courseRouter.js");
 const userRouter=require("./routes/userRouter.js");
 const cookieParser = require("cookie-parser");

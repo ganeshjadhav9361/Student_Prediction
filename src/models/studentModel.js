@@ -38,3 +38,15 @@ exports.updateStudent = (sid, name, email, contact, uid, cid) => {
 exports.deleteStudent = (sid) => {
     return conn.query("DELETE FROM students WHERE sid = ?", [sid]);
 };
+exports.getUnregisteredStudents = async () => {
+  const sql = `
+    SELECT u.*
+    FROM users u
+    LEFT JOIN students s ON u.uid = s.uid
+    WHERE u.role = 'student' AND s.uid IS NULL
+  `;
+  
+  // query() returns [rows, fields] in mysql2/promise
+  const [rows] = await conn.query(sql);
+  return rows;
+};

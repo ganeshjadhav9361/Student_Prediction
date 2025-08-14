@@ -60,3 +60,12 @@ exports.deleteStudent = (req, res) => {
             res.status(500).json({ error: "Error deleting student" });
         });
 }
+exports.getUnregisteredStudents = async (req, res) => {
+  try {
+    const data = await studentModel.getUnregisteredStudents();
+    res.json({ data });
+  } catch (err) {
+    console.error("Error fetching unregistered students:", err); // logs full error
+    res.status(500).json({ error: err.message }); // send actual MySQL error to Postman
+  }
+};
