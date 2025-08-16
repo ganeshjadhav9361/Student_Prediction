@@ -28,13 +28,13 @@ exports.addPerformance = async (req, res) => {
         return res.status(400).json({ success: false, message: "Student ID is required" });
     }
 
-    const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score];
-    if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 100)) {
-        return res.status(400).json({ success: false, message: "Scores must be between 0 and 100" });
+    const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score];
+    if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 10)) {
+        return res.status(400).json({ success: false, message: "Scores must be between 0 and 10" });
     }
 
     try {
-        await performanceModel.insertPerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score });
+        await performanceModel.insertPerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score });
         res.status(201).json({ success: true, message: "Performance added successfully" });
     } catch (error) {
         console.error("Error adding performance:", error);
@@ -43,19 +43,19 @@ exports.addPerformance = async (req, res) => {
 };
 
 exports.updatePerformance = async (req, res) => {
-    const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score } = req.body;
+    const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = req.body;
 
     if (!sid) {
         return res.status(400).json({ success: false, message: "Student ID is required" });
     }
 
-    const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score];
-    if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 100)) {
-        return res.status(400).json({ success: false, message: "Scores must be between 0 and 100" });
+    const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score];
+    if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 10)) {
+        return res.status(400).json({ success: false, message: "Scores must be between 0 and 10" });
     }
 
     try {
-        await performanceModel.updatePerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score });
+        await performanceModel.updatePerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score });
         res.status(200).json({ success: true, message: "Performance updated successfully" });
     } catch (error) {
         console.error("Error updating performance:", error);
