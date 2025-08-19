@@ -9,7 +9,7 @@ router.get("/viewCourses",/*courseMiddleware.verifyToken,courseMiddleware.isAdmi
 router.get("/viewCourseById/:id",/*courseMiddleware.verifyToken,courseMiddleware.isAdmin, */ courseCtrl.getCourseById);
 //router.delete("/deleteCourse" ,/*courseMiddleware.verifyToken,courseMiddleware.isAdmin, */ courseCtrl.deleteCourse);
 router.delete("/deleteCourse/:cid", courseCtrl.deleteCourse);
-router.post("/updateCourse",/*courseMiddleware.verifyToken,courseMiddleware.isAdmin, */ courseCtrl.UpdateCourse);
+router.put("/updateCourse", courseCtrl.UpdateCourse);
 
 
 

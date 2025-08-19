@@ -21,18 +21,7 @@ exports.getAllCourses = async () => {
         throw err;
     }
 };
-// exports.delCourseById = (cid) => {
-//     return new Promise((resolve, reject) => {
-        
-//         conn.query("DELETE FROM courses WHERE cid = ?", [cid], (err, result) => {
-//             if (err) {
-//                 reject(err);
-//             } else {
-//                 resolve(result);
-//             }
-//         });
-//     });
-// };
+
 exports.delCourseById = (cid) => {
   return new Promise((resolve, reject) => {
     conn.query("DELETE FROM courses WHERE cid = ?", [cid], (err, result) => {
