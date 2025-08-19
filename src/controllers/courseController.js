@@ -47,22 +47,42 @@ exports.getAllCourses = async (req, res) => {
     }
 };
 
+// exports.UpdateCourse = (req, res) => {
+//     const { cid, name } = req.body;  // ✅ FIXED HERE
+
+//     courseModel.UpdateCourse(cid, name)
+//         .then((result) => {
+//             if (result.affectedRows > 0) {
+//                 console.log("update controller hit");
+//                 res.json({ message: "Course updated successfully" });
+//             } else {
+//                 console.log("No course found with the given ID");
+//                 res.status(404).json({ error: "No course found with the given ID" });
+//             }
+//         })
+//         .catch((err) => {
+//             console.error("Error updating course:", err);
+//             res.status(500).json({ error: "Server error" });
+//         });
+// };
+
 exports.UpdateCourse = (req, res) => {
-    const { cid, name } = req.body;  // ✅ FIXED HERE
+    const { cid, name } = req.body;
 
     courseModel.UpdateCourse(cid, name)
         .then((result) => {
             if (result.affectedRows > 0) {
                 console.log("update controller hit");
-                res.json({ message: "Course updated successfully" });
+                // Always return JSON
+                return res.status(200).json({ success: true, message: "Course updated successfully" });
             } else {
                 console.log("No course found with the given ID");
-                res.status(404).json({ error: "No course found with the given ID" });
+                return res.status(404).json({ success: false, error: "No course found with the given ID" });
             }
         })
         .catch((err) => {
             console.error("Error updating course:", err);
-            res.status(500).json({ error: "Server error" });
+            return res.status(500).json({ success: false, error: "Server error" });
         });
 };
 exports.deleteCourse = (req, res) => {
