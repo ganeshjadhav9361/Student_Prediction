@@ -63,6 +63,28 @@ exports.updatePerformance = async (req, res) => {
     }
 };
 
+exports.getConfirmedStudents = async (req, res) => {
+  try {
+    const students = await performanceModel.getConfirmedStudents();
+    if (!students || students.length === 0) {
+      return res.status(404).json({ success: false, message: "No confirmed students found" });
+    }
+    res.status(200).json({ success: true, students });
+  } catch (err) {
+    console.error("Error fetching confirmed students:", err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+
+exports.getAllPerformance = async (req, res) => {
+  try {
+    const results = await performanceModel.getAllPerformance(); 
+    res.json({ students: results });   
+  } catch (err) {
+    console.error("DB Error:", err);
+    res.status(500).json({ message: "DB Error" });
+  }
+};
 
 
 

@@ -6,5 +6,10 @@ const { verifyToken, isAdmin } = require("../middleware/accessMiddleware.js");
 router.post("/performance/view", verifyToken, isAdmin, performance.viewForm);
 router.post("/performance/add", verifyToken, isAdmin, performance.addPerformance);
 router.post("/performance/update", verifyToken, isAdmin, performance.updatePerformance);
+router.get("/performance/students", performance.getConfirmedStudents);
+router.get("/performance/all", verifyToken, isAdmin,  performance.getAllPerformance);
+
+
 
 module.exports = router;
+

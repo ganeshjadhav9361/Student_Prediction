@@ -1,45 +1,38 @@
-const userModel = require("../models/loginModel");
+const { validateAdmin, validateStudent } = require("../models/loginModel");
 const bcrypt = require("bcrypt");
 const jwt = require("jsonwebtoken");
-
-const secretKey = process.env.secretkey;
+const secretKey = process.env.secretKey;
 
 exports.validateLoginUser = async (req, res) => {
-    const { email, password } = req.body;
+  const { email, password, role } = req.body;
 
-    try {
-        const user = await userModel.validateLoginUser(email);
+  try {
+    let user;
+    if (role === "admin") user = await validateAdmin(email);
+    else if (role === "student") user = await validateStudent(email);
 
-        if (user && await bcrypt.compare(password, user.password)) {
-            const token = jwt.sign(
-                {
-                    uid: user.uid,
-                    email: user.email,
-                    role: user.role
-                },
-                secretKey,
-                { expiresIn: "1h" }
-            );
+    if (!user)
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
 
-            res.cookie("token", token);
+    const validPass = await bcrypt.compare(password, user.password);
+    if (!validPass)
+      return res.status(401).json({ success: false, message: "Invalid email or password" });
 
-            console.log("Login successful, token generated:", token);
+    if (role === "student" && user.status !== 1)
+      return res.status(403).json({ success: false, message: "Student not confirmed" });
 
-                if (user.role === "admin") {
-                console.log("Admin dashboard");
-            } else if (user.role === "student") {
-                console.log("Student dashboard");
-            }
-            
-            return res.status(200).json({success: true,message: "Login successful",
-                token,  user: {uid: user.uid,username: user.username,role: user.role}
-            });
-        } else {
-            console.log("Login failed: Invalid username or password");
-            return res.status(401).json({success: false,message: "Login Failed: Invalid username or password"});
-        }
-    } catch (err) {
-        console.error("Login error:", err);
-        return res.status(500).json({success: false,message: "Login Failed: Server error"});
-    }
+    const payload = { uid: user.uid, role: user.role, username: user.name };
+    const token = jwt.sign(payload, secretKey, { expiresIn: "1h" });
+
+    res.cookie("token", token, {
+      httpOnly: true,
+      sameSite: "strict",
+      maxAge: 60 * 60 * 1000,
+    });
+
+    return res.status(200).json({success: true,message: "Login successful",user: { username: user.name, role: user.role },});
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
 };
