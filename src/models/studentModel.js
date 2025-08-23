@@ -57,7 +57,3 @@ exports.deleteStudent = async (sid) => {
 };
 
 
-
-
-
-

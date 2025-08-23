@@ -10,6 +10,7 @@ exports.userController = (req, res) => {
 
 exports.registerUser = async (req, res) => {
     const {name,email,contact, password, role } = req.body;
+
     const encPass = bcrypt.hashSync(password, 8);
 
     try {

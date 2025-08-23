@@ -78,3 +78,28 @@ exports.deleteStudent = (req, res) => {
     });
 };
 
+
+
+
+
+
+
+
+
+
+exports.getProfile = async (req, res) => {
+  const sid = req.params.sid;
+
+  try {
+    const student = await studentModel.getBySid(sid);
+
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+
+    res.status(200).json({ data: student });
+  } catch (err) {
+    console.error("Error in getStudentProfile controller:", err);
+    res.status(500).json({ error: "Server error while fetching student profile" });
+  }
+};
