@@ -26,9 +26,6 @@ exports.registerUser = async (req, res) => {
     }
 };
 
-
-
-// Unregistered students only
 exports.getUnregisteredUsers = async (req, res) => {
     try {
         const [rows] = await conn.query(
@@ -56,7 +53,6 @@ exports.getApprovedUsers = async (req, res) => {
   }
 };
 
-// Approve student
 exports.approveUser = async (req, res) => {
   try {
     const { uid } = req.params;

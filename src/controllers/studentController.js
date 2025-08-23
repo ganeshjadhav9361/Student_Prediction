@@ -1,17 +1,24 @@
 const studentModel = require("../models/studentModel");
 
-//exports.addStudent = async (req, res) => {
-//     const { name, email, contact, uid, cid } = req.body;
-//     console.log("Adding student:", { name, email, contact, uid, cid });
+exports.addStudent = async (req, res) => {
+  try {
+    const { name, email, contact, uid, cid } = req.body;
 
-//     try {
-//         const result = await studentModel.addStudent(name, email, contact, uid, cid);
-//         res.status(201).json({ message: "Student added", data: result });
-//     } catch (err) {
-//         console.error("Error in controller:", err);
-//         res.status(500).json({ error: "Server error while adding student" });
-//     }
-// };
+    if (!name || !email || !contact || !uid || !cid) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const result = await studentModel.addStudent(name, email, contact, uid, cid);
+    res.status(201).json({
+      message: "Student added successfully",
+      studentId: result.insertId,
+    });
+  } catch (err) {
+    console.error("Add student error:", err);
+    res.status(500).json({ message: "Failed to add student" });
+  }
+};
+
 exports.getAllStudents = async (req, res) => {
     try {
         const students = await studentModel.getAllStudents();
@@ -38,28 +45,6 @@ exports.updateStudent = (req, res) => {
             res.status(500).json({ error: "Error updating student" });
         });
 };
-// exports.deleteStudent = (req, res) => {
-//     const sid = req.params.sid;
-
-//     if (!sid) {
-//         return res.status(400).json({ error: "Student ID (sid) is required" });
-//     }
-
-//     studentModel.deleteStudent(sid)
-//         .then((result) => {
-//            if (result.affectedRows === 0) {
-//               // No rows deleted → student not found
-//                res.status(404).json({ error: "Student not found" });
-//               } else {
-//                  // Deletion successful
-//                    res.json({ message: "Student deleted successfully" });
-// }
-//         })
-//         .catch((err) => {
-//             console.error("Error deleting student:", err);
-//             res.status(500).json({ error: "Error deleting student" });
-//         });
-// }
 exports.getUnregisteredStudents = async (req, res) => {
   try {
     const data = await studentModel.getUnregisteredStudents();
@@ -70,42 +55,6 @@ exports.getUnregisteredStudents = async (req, res) => {
   }
 };
 
-// exports.addStudent = async (req, res) => {
-//   try {
-//     const { name, email, contact, uid, cid } = req.body;
-
-//     if (!name || !email || !contact || !uid || !cid) {
-//       return res.status(400).json({ message: "⚠ All fields are required" });
-//     }
-
-//     const result = await studentModel.addStudent(name, email, contact, uid, cid);
-//     res.status(201).json({ message: "✅ Student added successfully", studentId: result.insertId });
-
-//   } catch (error) {
-//     console.error("Add student error:", error);
-//     res.status(500).json({ message: "❌ Failed to add student" });
-//   }
-// };
-exports.addStudent = async (req, res) => {
-  try {
-    const { name, email, contact, uid, cid } = req.body;
-
-    if (!name || !email || !contact || !uid || !cid) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const result = await studentModel.addStudent(name, email, contact, uid, cid);
-
-    // ✅ Always send a response
-    res.status(201).json({
-      message: "Student added successfully",
-      studentId: result.insertId,
-    });
-  } catch (err) {
-    console.error("Add student error:", err);
-    res.status(500).json({ message: "Failed to add student" });
-  }
-};
 
 
 exports.deleteStudent = (req, res) => {
