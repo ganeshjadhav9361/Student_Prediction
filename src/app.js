@@ -9,7 +9,8 @@ const cookieParser = require("cookie-parser");
 const loginRouter = require("./routes/loginRouter.js"); 
 const studentRouter = require("./routes/studentRouter");
 const performanceRouter = require("./routes/performanceRouter.js");
-const predictionRouter =require("./routes/predictionRouter.js")
+// const predictionRouter =require("./routes/predictionRouter.js")
+const contactRouter= require("./routes/contactRouter.js")
 
 let path = require("path");
 let bodyParser = require("body-parser");
@@ -38,7 +39,8 @@ app.use("/",userRouter);
 app.use("/",loginRouter);
 app.use("/",studentRouter);
 app.use("/",performanceRouter);
-app.use("/",predictionRouter);
+// app.use("/",predictionRouter);
+app.use("/",contactRouter);
 app.get('/test', (req, res) => {
   res.send('Hello world!');
 });
