@@ -33,7 +33,6 @@ exports.getCourseById = (req, res) => {
 };
 
 exports.getAllCourses = async (req, res) => {
-  console.log("Fetching all courses...");
   try {
     const result = await courseModel.getAllCourses();
     res.json({ data: result });

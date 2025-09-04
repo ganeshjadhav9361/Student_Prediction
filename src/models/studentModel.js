@@ -15,12 +15,12 @@ exports.getAllStudents = () => {
             throw err;
         });
 };
-exports.updateStudent = (sid, name, email, contact, uid, cid) => {
-    return conn.query(
-        "update students set name=?, email=?, contact=?, uid=?, cid=? where sid=?",
-        [name, email, contact, uid, cid, sid]
-    );
-};
+// exports.updateStudent = (sid, name, email, contact, uid, cid) => {
+//     return conn.query(
+//         "update students set name=?, email=?, contact=?, uid=?, cid=? where sid=?",
+//         [name, email, contact, uid, cid, sid]
+//     );
+// };
 
 exports.getUnregisteredStudents = async () => {
   const sql = `
@@ -57,3 +57,24 @@ exports.deleteStudent = async (sid) => {
 };
 
 
+exports.UpdateCourse = async (cid, name1) => {
+    const [result] = await conn.query("update courses set name = ? where cid = ?", [name1, cid]);
+    return result;
+};
+
+exports.updateStudent = async(sid, name, email, contact, uid, cid) => {
+    const [result]=await conn.query(
+        "update students set name=?, email=?, contact=?, uid=?, cid=? where sid=?",
+        [name, email, contact, uid, cid, sid]);
+        return result;
+};
+exports.getStudentById = async (sid) => {
+    const query = `
+        SELECT s.sid, s.name, s.email, s.contact, s.uid, s.cid, c.name AS course_name
+        FROM students s
+        LEFT JOIN courses c ON s.cid = c.cid
+        WHERE s.sid = ?`;
+        
+    const [rows] = await conn.query(query, [sid]);
+    return rows[0] || null;
+};
