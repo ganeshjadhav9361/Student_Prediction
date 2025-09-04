@@ -4,18 +4,15 @@ const loginCtrl = require("../controllers/loginController");
 const { verifyToken } = require("../middleware/accessMiddleware");
 
 router.post("/login", loginCtrl.validateLoginUser);
-
 router.get("/admin/dashboard", verifyToken, (req, res) => {
   if (req.user.role === "admin") {
     return res.status(200).json({
-      success: true,
-      message: "Welcome to the admin dashboard",
-      user: req.user.username,
+      name: req.user.username,
+      role: req.user.role      
     });
   }
   res.status(403).json({ success: false, message: "Access Denied: Admins only." });
 });
-
 router.get("/student/dashboard", verifyToken, (req, res) => {
   if (req.user.role === "student") {
     return res.status(200).json({

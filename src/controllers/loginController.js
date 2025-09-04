@@ -33,8 +33,23 @@ exports.validateLoginUser = async (req, res) => {
     });
 
     return res.status(200).json({success: true,message: "Login successful",user: { username: user.name, role: user.role },});
+      
   } catch (err) {
     console.error(err);
     res.status(500).json({ success: false, message: "Server error" });
+  }
+};
+exports.getAdminDashboard = (req, res) => {
+  try {
+    const token = req.cookies.token;
+    if (!token) {
+      return res.status(401).json({ success: false, message: "Unauthorized" });
+    }
+    const decoded = jwt.verify(token, secretKey);
+    res.json({ name: decoded.username, role: decoded.role });
+
+  } catch (err) {
+    console.error("Error in getAdminDashboard:", err);
+    res.status(401).json({ success: false, message: "Invalid or expired token" });
   }
 };

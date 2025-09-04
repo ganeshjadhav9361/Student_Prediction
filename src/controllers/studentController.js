@@ -45,17 +45,33 @@ exports.updateStudent = (req, res) => {
             res.status(500).json({ error: "Error updating student" });
         });
 };
+exports.getStudentById = async (req, res) => {
+  const { sid } = req.params;
+
+  if (!sid) {
+    return res.status(400).json({ error: "Student ID is required" });
+  }
+
+  try {
+    const student = await studentModel.getStudentById(sid);
+    if (!student) {
+      return res.status(404).json({ error: "Student not found" });
+    }
+    res.json(student);
+  } catch (err) {
+    console.error("Error fetching student:", err);
+    res.status(500).json({ error: "Error fetching student" });
+  }
+};
 exports.getUnregisteredStudents = async (req, res) => {
   try {
     const data = await studentModel.getUnregisteredStudents();
     res.json({ data });
   } catch (err) {
-    console.error("Error fetching unregistered students:", err); // logs full error
-    res.status(500).json({ error: err.message }); // send actual MySQL error to Postman
+    console.error("Error fetching unregistered students:", err);
+    res.status(500).json({ error: err.message }); 
   }
 };
-
-
 
 exports.deleteStudent = (req, res) => {
   const sid = req.params.sid;
@@ -77,6 +93,10 @@ exports.deleteStudent = (req, res) => {
       res.status(500).json({ error: "Error deleting student" });
     });
 };
+
+
+exports.getProfile = async (req, res) => {
+  const sid = req.params.sid;
 
 
 exports.getStudentProfile = async (req, res) => {
