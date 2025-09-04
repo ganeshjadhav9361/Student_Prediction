@@ -1,4 +1,3 @@
-
 const courseModel = require("../models/courseModel");
 exports.createCourse = (req, res) => {
   let { name } = req.body;
