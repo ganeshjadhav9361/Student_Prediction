@@ -69,6 +69,8 @@ exports.getAllPerformance = async () => {
       from performance p
       join students s ON p.sid = s.sid
       left join courses c ON s.cid = c.cid
+      order by p.sid asc;
+
       order by p.per_id asc;
   `;
   const [rows] = await conn.query(sql);
