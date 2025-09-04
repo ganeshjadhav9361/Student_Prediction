@@ -57,3 +57,23 @@ exports.deleteStudent = async (sid) => {
 };
 
 
+exports.getStudentProfile = async (uid) => {
+  const query = "SELECT name, email, contact FROM students WHERE uid = ?";
+  const [rows] = await conn.query(query, [uid]);
+  return rows;
+};
+
+
+exports.getStudentCourses = async (uid) => {
+  const query = `
+    SELECT c.cid, c.name AS course
+    FROM students s
+    JOIN courses c ON s.cid = c.cid
+    WHERE s.uid = ?
+  `;
+  const [rows] = await conn.query(query, [uid]);
+  return rows;
+};
+
+
+

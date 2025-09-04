@@ -1,16 +1,34 @@
-const conn = require("../../db");
+const db = require("../../db");
 
-exports.getAllPerformanceData = async () => {
-    const [rows] = await conn.query(
-        "SELECT attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score FROM performance WHERE final_score IS NOT NULL"
-    );
-    return rows;
+exports.savePrediction = async (sid, readiness_level, shortlisted,suggestion) => {
+  const [result] = await db.query(
+    "INSERT INTO prediction (sid, readiness_level, shortlisted,suggestion) VALUES (?, ?, ?, ?)",
+    [sid, readiness_level, shortlisted,suggestion]
+  );
+  return result.insertId;
 };
 
-exports.getPerformanceByStudentId = async (sid) => {
-    const [rows] = await conn.query(
-        "SELECT attendance_percentage, machine_test, mcq_test, mock_interview_score FROM performance WHERE sid = ?",
-        [sid]
-    );
-    return rows[0] || null;
+exports.getAllPredictions = async () => {
+  const [rows] = await db.query(
+    `SELECT s.name, s.email, p.readiness_level, p.shortlisted,p.suggestion, p.created_at
+FROM prediction p
+JOIN students s ON p.sid = s.sid
+ORDER BY p.created_at ASC;
+`
+  );
+  return rows;
+};
+
+
+exports.getLatestPredictionFromDB = async (sid) => {
+  const [rows] = await db.query(
+    `SELECT s.name, s.email, p.readiness_level, p.shortlisted, p.suggestion, p.created_at
+     FROM prediction p
+     JOIN students s ON p.sid = s.sid
+     WHERE p.sid = ?
+     ORDER BY p.created_at DESC
+     LIMIT 1;`,
+    [sid]
+  );
+  return rows[0]; // undefined if no prediction exists
 };

@@ -1,10 +1,11 @@
-// const express = require("express");
-// const router = express.Router();
-// const predictionController = require("../controllers/predictionController");
-// const { verifyToken, isAdmin } = require("../middleware/accessMiddleware");
+const express = require("express");
+const router = express.Router();
+const { generatePrediction,getLatestPrediction, getAllPredictions } = require("../controllers/predictionController");
+const { verifyToken } = require("../middleware/accessMiddleware");
 
-// router.post("/train", verifyToken, isAdmin, predictionController.trainModel);
+router.get("/predict/:sid", verifyToken, generatePrediction);
+router.get("/prediction/all", verifyToken, getAllPredictions);
+router.get("/prediction/latest", verifyToken, getLatestPrediction);
 
-// router.get("/predict/:sid", verifyToken, predictionController.predictForStudent);
 
-// module.exports = router;
+module.exports = router;

@@ -79,27 +79,38 @@ exports.deleteStudent = (req, res) => {
 };
 
 
-
-
-
-
-
-
-
-
-exports.getProfile = async (req, res) => {
-  const sid = req.params.sid;
-
+exports.getStudentProfile = async (req, res) => {
   try {
-    const student = await studentModel.getBySid(sid);
+    const uid = req.user.uid;
+    console.log("Fetching profile for uid:", uid);
 
-    if (!student) {
-      return res.status(404).json({ error: "Student not found" });
+    const results = await studentModel.getStudentProfile(uid);
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "Profile not found" });
     }
 
-    res.status(200).json({ data: student });
-  } catch (err) {
-    console.error("Error in getStudentProfile controller:", err);
-    res.status(500).json({ error: "Server error while fetching student profile" });
+    res.json(results[0]);
+  } catch (error) {
+    console.error("Profile fetch error:", error);
+    res.status(500).json({ error: "Server error" });
+  }
+};
+
+
+
+exports.getStudentCourses = async (req, res) => {
+  try {
+    const uid = req.user.uid;
+    const results = await studentModel.getStudentCourses(uid);
+
+    if (!results || results.length === 0) {
+      return res.status(404).json({ error: "No courses found" });
+    }
+
+    res.json(results);
+  } catch (error) {
+    console.error("Courses fetch error:", error);
+    res.status(500).json({ error: "Server error" });
   }
 };
