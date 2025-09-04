@@ -56,7 +56,6 @@ exports.deleteStudent = async (sid) => {
   }
 };
 
-
 exports.UpdateCourse = async (cid, name1) => {
     const [result] = await conn.query("update courses set name = ? where cid = ?", [name1, cid]);
     return result;
@@ -78,3 +77,22 @@ exports.getStudentById = async (sid) => {
     const [rows] = await conn.query(query, [sid]);
     return rows[0] || null;
 };
+
+exports.getStudentProfile = async (uid) => {
+  const query = "SELECT name, email, contact FROM students WHERE uid = ?";
+  const [rows] = await conn.query(query, [uid]);
+  return rows;
+};
+
+
+exports.getStudentCourses = async (uid) => {
+  const query = `
+    SELECT c.cid, c.name AS course
+    FROM students s
+    JOIN courses c ON s.cid = c.cid
+    WHERE s.uid = ?
+  `;
+  const [rows] = await conn.query(query, [uid]);
+  return rows;
+};
+

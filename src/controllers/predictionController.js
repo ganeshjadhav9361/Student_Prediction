@@ -1,38 +1,68 @@
-// const predictionModel = require("../models/predictionModel");
-// const regression = require("../utils/regression");
+const { getLatestPerformance, getHistoricalPerformance } = require("../models/performanceModel");
+const { savePrediction, getLatestPredictionFromDB,  getAllPredictions } = require("../models/predictionModel");
+const { runLinearRegression } = require("../utils/predictor");
 
-// exports.trainModel = async (req, res) => {
-//     try {
-//         const data = await predictionModel.getAllPerformanceData();
-//         if (data.length < 2) {
-//             return res.status(400).json({ message: "Not enough data to train the model" });
-//         }
+exports.generatePrediction = async (req, res) => {
+  const sid = req.params.sid;
 
-//         const weights = regression.train(data);
-//         res.json({ message: "Model trained successfully", weights });
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ message: "Error training model" });
-//     }
-// };
+  try {
+    const latest = await getLatestPerformance(sid);
+    if (!latest) return res.status(404).json({ error: "No performance data found" });
 
-// exports.predictForStudent = async (req, res) => {
-//     try {
-//         const sid = req.params.sid;
-//         const perfData = await predictionModel.getPerformanceByStudentId(sid);
+    const historical = await getHistoricalPerformance(sid); 
 
-//         if (!perfData) {
-//             return res.status(404).json({ message: "No performance data found for this student" });
-//         }
+    const result = runLinearRegression(historical, latest);
 
-//         const prediction = regression.predict(perfData);
-//         if (prediction === null) {
-//             return res.status(400).json({ message: "Model not trained yet" });
-//         }
+    await savePrediction(
+      sid,
+      result.latest.readiness_level,
+      result.latest.shortlisted,
+      result.latest.suggestion
+    );
 
-//         res.json({ sid, predicted_final_score: prediction });
-//     } catch (err) {
-//         console.error(err);
-//         res.status(500).json({ message: "Error predicting score" });
-//     }
-// };
+    res.json({
+      sid,
+      predictedScore: result.latest.prediction.toFixed(2),
+      readiness_level: result.latest.readiness_level,
+      shortlisted: result.latest.shortlisted,
+      suggestion:result.latest.suggestion,
+      historical: result.historical, 
+    });
+  } catch (err) {
+    console.error("Prediction error:", err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+};
+
+exports.getAllPredictions = async (req, res) => {
+  try {
+    const predictions = await getAllPredictions();
+    res.json(predictions);
+  } catch (err) {
+    console.error("Fetch all predictions error:", err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+};
+
+
+exports.getLatestPrediction = async (req, res) => {
+  try {
+    // Get student ID from query parameter
+    const sid = parseInt(req.query.sid); // ?sid=123
+
+    if (!sid) {
+      return res.status(400).json({ error: "Student ID is required" });
+    }
+
+    const prediction = await getLatestPredictionFromDB(sid);
+
+    if (!prediction) {
+      return res.status(404).json({ error: "No prediction found for this student." });
+    }
+
+    res.json(prediction);
+  } catch (err) {
+    console.error("Fetch latest prediction error:", err);
+    res.status(500).json({ error: "Something went wrong" });
+  }
+};
