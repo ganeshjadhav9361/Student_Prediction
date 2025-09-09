@@ -1,8 +1,7 @@
-// const performanceModel = require("../models/performanceModel");
 const performanceModel = require("../models/performanceModel");
 const { runLinearRegression } = require("../utils/predictor");
 const { savePrediction } = require("../models/predictionModel");
-
+const predictionModel=require("../models/predictionModel");
 exports.addPerformance = async (req, res) => {
   const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = req.body;
 
@@ -69,48 +68,6 @@ exports.getPerformanceByStudentId = async (req, res) => {
     }
 };
 
-// exports.addPerformance = async (req, res) => {
-//     const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score } = req.body;
-
-//     if (!sid) {
-//         return res.status(400).json({ success: false, message: "Student ID is required" });
-//     }
-
-//     const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score];
-//     if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 10)) {
-//         return res.status(400).json({ success: false, message: "Scores must be between 0 and 10" });
-//     }
-
-//     try {
-//         await performanceModel.insertPerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score });
-//         res.status(201).json({ success: true, message: "Performance added successfully" });
-//     } catch (error) {
-//         console.error("Error adding performance:", error);
-//         res.status(500).json({ success: false, message: "Server error" });
-//     }
-// };
-
-exports.updatePerformance = async (req, res) => {
-    const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = req.body;
-
-    if (!sid) {
-        return res.status(400).json({ success: false, message: "Student ID is required" });
-    }
-
-    const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score];
-    if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 10)) {
-        return res.status(400).json({ success: false, message: "Scores must be between 0 and 10" });
-    }
-
-    try {
-        await performanceModel.updatePerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score });
-        res.status(200).json({ success: true, message: "Performance updated successfully" });
-    } catch (error) {
-        console.error("Error updating performance:", error);
-        res.status(500).json({ success: false, message: "Server error" });
-    }
-};
-
 exports.getConfirmedStudents = async (req, res) => {
   try {
     const students = await performanceModel.getConfirmedStudents();
@@ -134,10 +91,9 @@ exports.getAllPerformance = async (req, res) => {
   }
 };
 
-
 exports.getStudentPerformance = async (req, res) => {
   try {
-    const uid = req.user.uid; // comes from JWT middleware
+    const uid = req.user.uid; 
 
     const performances = await performanceModel.getPerformanceByUid(uid);
 
@@ -152,7 +108,60 @@ exports.getStudentPerformance = async (req, res) => {
   }
 };
 
+exports.updatePerformance = async (req, res) => {
+  const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = req.body;
 
+  if (!sid) {
+    return res.status(400).json({ success: false, message: "Student ID is required" });
+  }
 
+  const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score];
+  if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 10)) {
+    return res.status(400).json({ success: false, message: "Scores must be between 0 and 10" });
+  }
+
+  try {
+    await performanceModel.updatePerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score });
+
+    const latest = await performanceModel.getLatestPerformance(sid);
+    const historical = await performanceModel.getHistoricalPerformance(sid);
+
+    const result = runLinearRegression(historical, latest);
+
+    const latestPrediction = await predictionModel.getLatestPredictionBySid(sid);
+    if (latestPrediction) {
+      await predictionModel.updatePrediction({
+        pre_id: latestPrediction.pre_id,
+        readiness_level: result.latest.readiness_level,
+        shortlisted: result.latest.shortlisted,
+        suggestion: result.latest.suggestion
+      });
+    } else {
+  
+      await predictionModel.savePrediction(
+        sid,
+        result.latest.readiness_level,
+        result.latest.shortlisted,
+        result.latest.suggestion
+      );
+    }
+
+    res.status(200).json({
+      success: true,
+      message: "Performance & Prediction updated successfully",
+      performance: latest,
+      prediction: {
+        predictedScore: result.latest.prediction.toFixed(2),
+        readiness_level: result.latest.readiness_level,
+        shortlisted: result.latest.shortlisted,
+        suggestion: result.latest.suggestion
+      }
+    });
+
+  } catch (error) {
+    console.error("Error updating performance:", error);
+    res.status(500).json({ success: false, message: "Server error" });
+  }
+};
 
 

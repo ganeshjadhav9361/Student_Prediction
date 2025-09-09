@@ -1,5 +1,5 @@
 const { getLatestPerformance, getHistoricalPerformance } = require("../models/performanceModel");
-const { savePrediction, getLatestPredictionFromDB,  getAllPredictions } = require("../models/predictionModel");
+const { savePrediction, getLatestPredictionBySid,getShortlistedPredictions,  getAllPredictions } = require("../models/predictionModel");
 const { runLinearRegression } = require("../utils/predictor");
 
 exports.generatePrediction = async (req, res) => {
@@ -44,25 +44,39 @@ exports.getAllPredictions = async (req, res) => {
   }
 };
 
-
 exports.getLatestPrediction = async (req, res) => {
   try {
-    // Get student ID from query parameter
-    const sid = parseInt(req.query.sid); // ?sid=123
+    const sid = req.user.sid; // get sid from verified JWT
 
-    if (!sid) {
-      return res.status(400).json({ error: "Student ID is required" });
-    }
-
-    const prediction = await getLatestPredictionFromDB(sid);
+    const prediction = await getLatestPredictionBySid(sid);
 
     if (!prediction) {
-      return res.status(404).json({ error: "No prediction found for this student." });
+      return res.status(404).json({ message: "No prediction found for this student" });
     }
 
-    res.json(prediction);
-  } catch (err) {
-    console.error("Fetch latest prediction error:", err);
-    res.status(500).json({ error: "Something went wrong" });
+    return res.status(200).json({ success: true, data: prediction });
+  } catch (error) {
+    console.error("Error in getLatestPrediction:", error.message);
+    return res.status(500).json({ success: false, error: "Internal server error" });
+  }
+};
+
+
+exports.getShortListedStudent = async (req, res) => {
+  try {
+    if (req.user.role !== "admin") {
+      return res.status(403).json({ success: false, message: "Access denied. Admins only." });
+    }
+
+    const shortlisted = await getShortlistedPredictions();
+
+    if (!shortlisted || shortlisted.length === 0) {
+      return res.status(404).json({ message: "No shortlisted students found" });
+    }
+
+    return res.status(200).json({ success: true, data: shortlisted });
+  } catch (error) {
+    console.error("Error in getShortListedStudent:", error.message);
+    return res.status(500).json({ success: false, error: "Internal server error" });
   }
 };

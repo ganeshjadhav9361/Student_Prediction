@@ -21,7 +21,8 @@ exports.validateLoginUser = async (req, res) => {
     if (role === "student" && user.status !== 1)
       return res.status(403).json({ success: false, message: "Student not confirmed" });
 
-    const payload = { uid: user.uid, role: user.role, username: user.name };
+     const payload = { uid: user.uid, role: user.role, username: user.name,sid:user.sid  };
+    console.log(payload);
     const token = jwt.sign(payload, secretKey, { expiresIn: "1h" });
 
     res.cookie("token", token, {

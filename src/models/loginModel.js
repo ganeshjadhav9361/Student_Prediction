@@ -12,4 +12,5 @@ async function validateStudent(email) {
   return rows[0] || null;
 }
 
+
 module.exports = { validateAdmin, validateStudent };
