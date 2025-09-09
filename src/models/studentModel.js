@@ -56,17 +56,62 @@ exports.deleteStudent = async (sid) => {
   }
 };
 
-exports.UpdateCourse = async (cid, name1) => {
-    const [result] = await conn.query("update courses set name = ? where cid = ?", [name1, cid]);
-    return result;
-};
 
-exports.updateStudent = async(sid, name, email, contact, uid, cid) => {
-    const [result]=await conn.query(
-        "update students set name=?, email=?, contact=?, uid=?, cid=? where sid=?",
-        [name, email, contact, uid, cid, sid]);
-        return result;
+
+// exports.updateStudent = async (req, res) => {
+//   try {
+//     let { sid, name, email, contact, uid, cid } = req.body;
+
+//     // If cid not provided, keep old one
+//     if (!cid) {
+//       const [rows] = await conn.query("SELECT cid FROM students WHERE sid=?", [sid]);
+//       if (rows.length > 0) {
+//         cid = rows[0].cid; // use old course id
+//       }
+//     }
+
+//     const [result] = await conn.query(
+//       `UPDATE students SET name=?, email=?, contact=?, uid=?, cid=? WHERE sid=?`,
+//       [name, email, contact, uid, cid, sid]
+//     );
+
+//     if (result.affectedRows === 0) {
+//       return res.status(404).json({ message: "Student not found" });
+//     }
+
+//     res.json({ message: "Student updated successfully" });
+//   } catch (error) {
+//     console.error("Update student error:", error);
+//     res.status(500).json({ message: "Failed to update student" });
+//   }
+// };
+
+
+
+exports.updateStudent = async (sid, name, email, contact, uid, cid) => {
+  // If cid not provided, keep old one
+  if (!cid) {
+    const [rows] = await conn.query("SELECT cid FROM students WHERE sid=?", [sid]);
+    if (rows.length > 0) {
+      cid = rows[0].cid; // use old course id
+    }
+  }
+
+  const [result] = await conn.query(
+    `UPDATE students 
+     SET name=?, email=?, contact=?, uid=?, cid=? 
+     WHERE sid=?`,
+    [name, email, contact, uid, cid, sid]
+  );
+
+  return result;
 };
+// exports.updateStudent = async(sid, name, email, contact, uid, cid) => {
+//     const [result]=await conn.query(
+//         "update students set name=?, email=?, contact=?, uid=?, cid=? where sid=?",
+//         [name, email, contact, uid, cid, sid]);
+//         return result;
+// };
 exports.getStudentById = async (sid) => {
     const query = `
         SELECT s.sid, s.name, s.email, s.contact, s.uid, s.cid, c.name AS course_name
@@ -96,3 +141,7 @@ exports.getStudentCourses = async (uid) => {
   return rows;
 };
 
+// exports.UpdateCourse = async (cid, name1) => {
+//     const [result] = await conn.query("update courses set name = ? where cid = ?", [name1, cid]);
+//     return result;
+// };

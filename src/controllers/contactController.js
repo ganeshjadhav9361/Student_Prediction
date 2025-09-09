@@ -23,3 +23,23 @@ exports.addContact = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error while saving contact", error: err.message });
   }
 };
+
+exports.getAllEnquiry = async (req, res) => {
+  try {
+    const result = await contactModel.getAllEnquiry();
+    res.json({ data: result });
+  } catch (err) {
+    console.error("Controller Error:", err);
+    res.status(500).json({ error: "Server error while fetching enquiry" });
+  }
+};
+
+
+// exports.getAllEnquiry = async (req, res) => {
+//   try {
+//     const result = await contactModel.getAllEnqiury();
+//     res.json({ data: result });
+//   } catch (err) {
+//     res.status(500).json({ error: "Server error while fetching enquiry" });
+//   }
+// };

@@ -29,21 +29,26 @@ exports.getAllStudents = async (req, res) => {
     }
 };
 
-exports.updateStudent = (req, res) => {
-    const { sid, name, email, contact, uid, cid } = req.body;
+
+exports.updateStudent = async (req, res) => {
+  try {
+    let { sid, name, email, contact, uid, cid } = req.body;
 
     if (!sid) {
-        return res.status(400).json({ error: "Student ID (sid) is required" });
+      return res.status(400).json({ message: "Student ID is required" });
     }
 
-    studentModel.updateStudent(sid, name, email, contact, uid, cid)
-        .then(() => {
-            res.json({ message: "Student updated successfully" });
-        })
-        .catch((err) => {
-            console.error("Error updating student:", err);
-            res.status(500).json({ error: "Error updating student" });
-        });
+    const result = await studentModel.updateStudent(sid, name, email, contact, uid, cid);
+
+    if (result.affectedRows === 0) {
+      return res.status(404).json({ message: "Student not found" });
+    }
+
+    res.json({ message: "Student updated successfully" });
+  } catch (error) {
+    console.error("Update student error:", error);
+    res.status(500).json({ message: "Failed to update student" });
+  }
 };
 exports.getStudentById = async (req, res) => {
   const { sid } = req.params;
@@ -111,8 +116,6 @@ exports.getStudentProfile = async (req, res) => {
     res.status(500).json({ error: "Server error" });
   }
 };
-
-
 
 exports.getStudentCourses = async (req, res) => {
   try {

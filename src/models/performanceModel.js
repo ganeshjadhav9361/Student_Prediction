@@ -57,6 +57,11 @@ exports.getAllPerformance = async () => {
       join students s ON p.sid = s.sid
       left join courses c ON s.cid = c.cid
       order by p.sid asc;
+
+
+     
+
+
   `;
   const [rows] = await conn.query(sql);
   return rows;
