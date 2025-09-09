@@ -17,7 +17,7 @@ router.get("/student/dashboard", verifyToken, (req, res) => {
   if (req.user.role === "student") {
     return res.status(200).json({
       success: true,
-      message: "Welcome to the student dashboard",
+      message: "",
       user: req.user.username,
     });
   }

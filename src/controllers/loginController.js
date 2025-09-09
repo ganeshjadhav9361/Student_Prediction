@@ -28,10 +28,9 @@ exports.validateLoginUser = async (req, res) => {
       httpOnly: true,
       sameSite: "strict",
       secure:false,
-      maxAge: 60 * 60 * 1000,
+      maxAge:  60* 60 * 1000,
       path:"/",
     });
-
     return res.status(200).json({success: true,message: "Login successful",user: { username: user.name, role: user.role },});
       
   } catch (err) {
