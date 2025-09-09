@@ -94,11 +94,6 @@ exports.deleteStudent = (req, res) => {
     });
 };
 
-
-exports.getProfile = async (req, res) => {
-  const sid = req.params.sid;
-
-
 exports.getStudentProfile = async (req, res) => {
   try {
     const uid = req.user.uid;
