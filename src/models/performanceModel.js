@@ -98,14 +98,51 @@ exports.getPerformanceByUid = async (uid) => {
   return rows;
 };
 
+
+// exports.updatePerformance = async (data) => {
+//     const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = data;
+
+//     const final_score = Number(attendance_percentage || 0) + Number(machine_test || 0) + Number(mcq_test || 0) + Number(mock_interview_score || 0);
+//     const weight_score = (attendance_percentage || 0)*0.1 + (machine_test || 0)*0.3 + (mcq_test || 0)*0.3 + (mock_interview_score || 0)*0.3;
+//     const percentage=(weight_score/10)*100;
+
+//     const query = "update performance set attendance_percentage = ?, machine_test = ?, mcq_test = ?, mock_interview_score = ?, final_score = ?, percentage = ? where sid = ? order by created_at desc limit 1;";
+//     return conn.query(query, [attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score, percentage, sid]);
+// };
+
+
 exports.updatePerformance = async (data) => {
-    const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = data;
+  const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = data;
 
-    const final_score = Number(attendance_percentage || 0) + Number(machine_test || 0) + Number(mcq_test || 0) + Number(mock_interview_score || 0);
-    const weight_score = (attendance_percentage || 0)*0.1 + (machine_test || 0)*0.3 + (mcq_test || 0)*0.3 + (mock_interview_score || 0)*0.3;
-    const percentage=(weight_score/10)*100;
+  // 1. Get the latest record to keep old values if missing
+  const [rows] = await conn.query(
+    "SELECT attendance_percentage, machine_test, mcq_test, mock_interview_score FROM performance WHERE sid = ? ORDER BY created_at DESC LIMIT 1",
+    [sid]
+  );
+  const prev = rows[0] || {};
 
-    const query = "update performance set attendance_percentage = ?, machine_test = ?, mcq_test = ?, mock_interview_score = ?, final_score = ?, percentage = ? where sid = ? order by created_at desc limit 1;";
-    return conn.query(query, [attendance_percentage, machine_test, mcq_test, mock_interview_score, final_score, percentage, sid]);
+  // 2. Use new value if given, else keep old
+  const att = attendance_percentage !== "" && attendance_percentage !== undefined ? attendance_percentage : prev.attendance_percentage;
+  const mach = machine_test !== "" && machine_test !== undefined ? machine_test : prev.machine_test;
+  const mcq = mcq_test !== "" && mcq_test !== undefined ? mcq_test : prev.mcq_test;
+  const mock = mock_interview_score !== "" && mock_interview_score !== undefined ? mock_interview_score : prev.mock_interview_score;
+
+  // 3. Recalculate
+  const final_score = Number(att) + Number(mach) + Number(mcq) + Number(mock);
+  const weight_score = att * 0.1 + mach * 0.3 + mcq * 0.3 + mock * 0.3;
+  const percentage = (weight_score / 10) * 100;
+
+  // 4. Update only latest record
+  const query = `
+    UPDATE performance 
+    SET attendance_percentage = ?, machine_test = ?, mcq_test = ?, mock_interview_score = ?, final_score = ?, percentage = ?
+    WHERE sid = ? 
+    ORDER BY created_at DESC 
+    LIMIT 1
+  `;
+  return conn.query(query, [att, mach, mcq, mock, final_score, percentage, sid]);
 };
+
+
+
 
