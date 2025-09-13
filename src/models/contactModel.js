@@ -9,10 +9,10 @@ async function insertContact(name, email, subject, message) {
 async function getAllEnquiry() {
   try {
     const [rows] = await conn.query("SELECT * FROM contact ORDER BY id ASC");
-    console.log("Query result:", rows);
+   
     return rows;
   } catch (err) {
-    console.error("Query Error:", err);
+    
     throw err;
   }
 }

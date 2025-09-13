@@ -108,6 +108,65 @@ exports.getStudentPerformance = async (req, res) => {
   }
 };
 
+// exports.updatePerformance = async (req, res) => {
+//   const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = req.body;
+
+//   if (!sid) {
+//     return res.status(400).json({ success: false, message: "Student ID is required" });
+//   }
+
+//   const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score];
+//   if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 10)) {
+//     return res.status(400).json({ success: false, message: "Scores must be between 0 and 10" });
+//   }
+
+//   try {
+//     await performanceModel.updatePerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score });
+
+//     const latest = await performanceModel.getLatestPerformance(sid);
+//     const historical = await performanceModel.getHistoricalPerformance(sid);
+
+//     const result = runLinearRegression(historical, latest);
+
+//     const latestPrediction = await predictionModel.getLatestPredictionBySid(sid);
+//     if (latestPrediction) {
+//       await predictionModel.updatePrediction({
+//         pre_id: latestPrediction.pre_id,
+//         readiness_level: result.latest.readiness_level,
+//         shortlisted: result.latest.shortlisted,
+//         suggestion: result.latest.suggestion
+//       });
+//     } else {
+  
+//       await predictionModel.savePrediction(
+//         sid,
+//         result.latest.readiness_level,
+//         result.latest.shortlisted,
+//         result.latest.suggestion
+//       );
+//     }
+
+//     res.status(200).json({
+//       success: true,
+//       message: "Performance & Prediction updated successfully",
+//       performance: latest,
+//       prediction: {
+//         predictedScore: result.latest.prediction.toFixed(2),
+//         readiness_level: result.latest.readiness_level,
+//         shortlisted: result.latest.shortlisted,
+//         suggestion: result.latest.suggestion
+//       }
+//     });
+
+//   } catch (error) {
+//     console.error("Error updating performance:", error);
+//     res.status(500).json({ success: false, message: "Server error" });
+//   }
+// };
+
+
+
+
 exports.updatePerformance = async (req, res) => {
   const { sid, attendance_percentage, machine_test, mcq_test, mock_interview_score } = req.body;
 
@@ -115,12 +174,8 @@ exports.updatePerformance = async (req, res) => {
     return res.status(400).json({ success: false, message: "Student ID is required" });
   }
 
-  const scores = [attendance_percentage, machine_test, mcq_test, mock_interview_score];
-  if (!scores.every(score => !isNaN(score) && score >= 0 && score <= 10)) {
-    return res.status(400).json({ success: false, message: "Scores must be between 0 and 10" });
-  }
-
   try {
+    // ✅ update while keeping old values if empty
     await performanceModel.updatePerformance({ sid, attendance_percentage, machine_test, mcq_test, mock_interview_score });
 
     const latest = await performanceModel.getLatestPerformance(sid);
@@ -137,7 +192,6 @@ exports.updatePerformance = async (req, res) => {
         suggestion: result.latest.suggestion
       });
     } else {
-  
       await predictionModel.savePrediction(
         sid,
         result.latest.readiness_level,
@@ -163,5 +217,3 @@ exports.updatePerformance = async (req, res) => {
     res.status(500).json({ success: false, message: "Server error" });
   }
 };
-
-
