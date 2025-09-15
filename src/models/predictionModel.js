@@ -11,16 +11,13 @@ exports.savePrediction = async (sid, readiness_level, shortlisted,suggestion) =>
 exports.getAllPredictions = async () => {
   const [rows] = await db.query(
     `select s.name, s.email, p.readiness_level, p.shortlisted,p.suggestion, p.created_at
-    from prediction p join students s on p.sid = s.sid order by p.created_at asc;
-`
+    from prediction p join students s on p.sid = s.sid order by p.created_at asc;`
   );
   return rows;
 };
 
-
 exports.getLatestPredictionBySid = async (sid) => {
   const query = `select * from prediction where sid = ? order by created_at desc limit 1`;
-
   try {
     const [rows] = await db.query(query, [sid]);
     return rows.length > 0 ? rows[0] : null;
@@ -35,7 +32,6 @@ exports.getShortlistedPredictions = async () => {
     from prediction p join students s on p.sid = s.sid where p.pre_id in (
       select max(pre_id) from prediction group by sid) and p.shortlisted = 1
     order by p.created_at asc;`;
-
   try {
     const [rows] = await db.query(query);
     return rows;

@@ -1,7 +1,6 @@
 const courseModel = require("../models/courseModel");
 exports.createCourse = (req, res) => {
   let { name } = req.body;
-
   courseModel.saveCourse(name)
     .then((result) => {
       if (result && result.affectedRows > 0) {
@@ -12,13 +11,12 @@ exports.createCourse = (req, res) => {
       }
     })
     .catch((err) => {
-
       res.status(500).json({ message: "Failed to add course." });
     });
 };
+
 exports.getCourseById = (req, res) => {
   const cid = req.params.id;
-
   courseModel.getCourseById(cid)
     .then((result) => {
       if (result.length === 0) {
@@ -56,6 +54,7 @@ exports.UpdateCourse = async (req, res) => {
   }
 
 };
+
 exports.deleteCourse = async (req, res) => {
   const cid = req.params.cid;
   try {

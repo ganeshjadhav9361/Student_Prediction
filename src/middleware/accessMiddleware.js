@@ -5,9 +5,7 @@ const secretKey = process.env.secretKey;
 exports.verifyToken = (req, res, next) => {
   const token = req.cookies.token;
   console.log("Token from cookie:", token);
-
   if (!token) return res.status(401).json({ error: "No token found in cookies." });
-
   try {
     const decoded = jwt.verify(token, secretKey);
     req.user = decoded; 

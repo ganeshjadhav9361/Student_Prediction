@@ -4,7 +4,6 @@ const { runLinearRegression } = require("../utils/predictor");
 
 exports.generatePrediction = async (req, res) => {
   const sid = req.params.sid;
-
   try {
     const latest = await getLatestPerformance(sid);
     if (!latest) return res.status(404).json({ error: "No performance data found" });
@@ -19,7 +18,6 @@ exports.generatePrediction = async (req, res) => {
       result.latest.shortlisted,
       result.latest.suggestion
     );
-
     res.json({
       sid,
       predictedScore: result.latest.prediction.toFixed(2),
@@ -46,14 +44,11 @@ exports.getAllPredictions = async (req, res) => {
 
 exports.getLatestPrediction = async (req, res) => {
   try {
-    const sid = req.user.sid; // get sid from verified JWT
-
+    const sid = req.user.sid; 
     const prediction = await getLatestPredictionBySid(sid);
-
     if (!prediction) {
       return res.status(404).json({ message: "No prediction found for this student" });
     }
-
     return res.status(200).json({ success: true, data: prediction });
   } catch (error) {
     console.error("Error in getLatestPrediction:", error.message);
@@ -61,19 +56,15 @@ exports.getLatestPrediction = async (req, res) => {
   }
 };
 
-
 exports.getShortListedStudent = async (req, res) => {
   try {
     if (req.user.role !== "admin") {
       return res.status(403).json({ success: false, message: "Access denied. Admins only." });
     }
-
     const shortlisted = await getShortlistedPredictions();
-
     if (!shortlisted || shortlisted.length === 0) {
       return res.status(404).json({ message: "No shortlisted students found" });
     }
-
     return res.status(200).json({ success: true, data: shortlisted });
   } catch (error) {
     console.error("Error in getShortListedStudent:", error.message);

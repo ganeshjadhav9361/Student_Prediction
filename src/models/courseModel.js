@@ -8,6 +8,7 @@ exports.saveCourse = async (name) => {
     throw err;
   }
 };
+
 exports.getAllCourses = async () => {
     try {
         const [rows] = await conn.query("select * from courses order by cid ASC");
@@ -21,6 +22,7 @@ exports.delCourseById = async(cid) => {
     const [result] = await conn.query("delete from courses where cid = ?", [cid]);
     return result;
 };
+
 exports.getCourseById = (cid) => {
     return new Promise((resolve, reject) => {
         conn.query("select * from courses where id = ?", [cid], (err, result) => {
