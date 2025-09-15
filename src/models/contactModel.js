@@ -8,14 +8,13 @@ async function insertContact(name, email, subject, message) {
 
 async function getAllEnquiry() {
   try {
-    const [rows] = await conn.query("SELECT * FROM contact ORDER BY id ASC");
-   
+    const [rows] = await conn.query("select * from contact order by id ASC");
     return rows;
-  } catch (err) {
-    
+  } catch (err) { 
     throw err;
   }
 }
+
 module.exports = {
   insertContact ,getAllEnquiry 
 };

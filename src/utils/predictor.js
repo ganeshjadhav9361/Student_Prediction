@@ -5,7 +5,6 @@ const categorize = (score) => {
   if (score >= 50) return "Ready";
   return "Not Ready";
 };
-
 const getSuggestion = (score) => {
   if (score >= 80) return "Excellent performance, keep it up!";
   if (score >= 50) return "Good progress, but there’s room for improvement.";
@@ -14,23 +13,18 @@ const getSuggestion = (score) => {
 
 exports.runLinearRegression = (historical, latest) => {
   const allRecords = [...historical, latest];
-
   const X = [];
   const Y = [];
-
   allRecords.forEach((r) => {
     const attendance = Number(r.attendance_percentage) || 0;
     const machine = Number(r.machine_test) || 0;
     const mcq = Number(r.mcq_test) || 0;
     const mock = Number(r.mock_interview_score) || 0;
     const percentage = Number(r.percentage) || 0;
-
     if (attendance + machine + mcq + mock === 0) return;
-
     X.push([attendance, machine, mcq, mock]);
     Y.push(percentage);
   });
-
   if (X.length === 0) {
     const fallbackScore = Number(latest?.percentage) || 0;
     return {
@@ -43,7 +37,6 @@ exports.runLinearRegression = (historical, latest) => {
       historical: [],
     };
   }
-
   if (X.length === 1) {
     const fallbackScore = Y[0];
     return {
@@ -65,7 +58,6 @@ exports.runLinearRegression = (historical, latest) => {
       }),
     };
   }
-
   let mlr;
   try {
     mlr = new MLR(X, Y);
@@ -82,7 +74,6 @@ exports.runLinearRegression = (historical, latest) => {
       historical: [],
     };
   }
-
   const historicalResults = allRecords.map((r) => {
     const features = [
       Number(r.attendance_percentage) || 0,
@@ -99,7 +90,6 @@ exports.runLinearRegression = (historical, latest) => {
       suggestion: getSuggestion(prediction),
     };
   });
-
   return {
     latest: historicalResults[historicalResults.length - 1],
     historical: historicalResults,

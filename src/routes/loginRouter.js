@@ -23,10 +23,8 @@ router.get("/student/dashboard", verifyToken, (req, res) => {
   }
   res.status(403).json({ success: false, message: "Access Denied: Students only." });
 });
-
 router.post("/logout", (req, res) => {
   res.clearCookie("token");
   res.status(200).json({ success: true, message: "Logged out successfully." });
 });
-
 module.exports = router;
